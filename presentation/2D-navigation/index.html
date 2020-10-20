@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Media migration Tobar and Dulchais</title>
+    <meta name="description" content="Application Bodleian Library" />
+    <meta name="author" content="Sebastian Lange" />
+    <script src="https://kit.fontawesome.com/df0850e7ca.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="highlight/styles/agate.css">
+    <script src="highlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link href="vendor/skeleton/skeleton-2.0.4.css" rel="stylesheet" />
+    <link href="../css/impress-common.css" rel="stylesheet" />
+    <link href="css/presentation.css" rel="stylesheet" />
+    <link href="css/skeleton.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+</head>
+<body class="impress-not-supported">
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<!-- Some images that are fixed to background in the css -->
+
+<img id="applepie-image" class="bg" src="">
+<img id="old-guitar-image" class="bg" src="images/old-guitar.jpg">
+<img id="track_tape-image" class="bg" src="images/track_tape_structure.png">
+<img id="tolkien-migration-image" class="bg" src="images/tolkien_migration.png">
+
+
+
+
+<div id="impress" data-transition-duration="1000">
+
+    <div class="step" data-scale="2" data-x="-500" data-y="-500">
+        <h4><strong>10/26/2020</strong> | Bodleian Digital Library Systems & Services (BDLSS)</h4>
+        <h4><strong>Application as Software Engineer (Digital Research)</strong></h4>
+        <div class="heading">
+        <h1>Tobar and Dulchais</h1>
+        <h2>Migration of media files into ArchivesSpace</h2>
+        </div>
+        <h4 class="down-100">
+            <strong>Slides:</strong>
+            <a href="#" title="View the presentation online">
+                Link
+            </a>
+        </h4>
+
+        <h5>
+            <strong><a class="mysite" href="www.sebastian-lange.eu">Sebastian Lange</a></strong> |
+            <a class="twitter" href="https://twitter.com/BastiiLange" title="Sebastian Lange on Twitter"><i class="fab fa-twitter"></i>@BastiiLange</a> |
+            <a class="orcid" href="https://orcid.org/0000-0003-2590-6266" title="Sebastian Lange on ORCID"><i class="fab fa-orcid"></i>0000-0003-2590-6266</a> |
+            <a class="github" href="https://github.com/Slange-Mhath" title="Sebastian Lange on GitHub"><i class="fab fa-github"></i>Slange-Mhath</a>
+        </h5>
+    </div>
+
+    <div id="contents" class="step" data-rel-x="1500" data-rel-y="1500" data-scale="1">
+        <h1>Background:</h1>
+        <p>Tobar and Dulchais is the biggest and most important data repository of Scottish/Gaelic music worldwide</p>
+        <ul>
+            <li class="substep">Tobar and Dulchais Data:
+                <ul>
+                <li>Digitised tapes with ~50.000 tracks</li>
+                <li>Stored in an ad-hoc Postgres-DB</li>
+                <li>~ 100 Images </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Ice cream slides (3) -->
+    <div id="icecream" class="step" data-x="2000" data-y="2000"
+         data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
+         data-goto-next-list="contents icecream-pro contents crisps">
+        <h1>The challenge:</h1>
+
+        <ul>
+            <li>Migrate the content as copy into an Archival System (EAD):
+            <ul>
+            <li>Create a digital object for the track and its metadata in DSpace</li>
+            <li>Link the digital object to the archival object in ArchivesSpace</li>
+            <li>Respect archival standards</li>
+        </ul>
+            </li>
+        </ul>
+        <img class="substep graphic" src="images/archival_structure.png">
+    </div>
+
+    <div id="icecream-pro" class="step" data-rel-x="0" data-rel-y="1000"
+         data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
+         data-goto-next-list="icecream icecream-con applepie crisps-pro">
+        <h1>Plan substeps and goals</h1>
+        <ol>
+            <li>Login to DSpace via API </li>
+            <pre><code>def login_to_dspace():
+    response = requests.post(ds_endpoint, data=login_data)
+    set_cookie = response.headers["Set-Cookie"].split(";")[0]
+    session_id = set_cookie[set_cookie.find("=") + 1:]
+    return session_id</code></pre>
+            <li>Upload the first track to DSpace</li>
+            <pre><code># Uploads the track into the DSPACE object
+
+def upload_track(ds_object_link, track_to_open, ds_object_tag):
+    # track_list = create_track_list()
+    # test_object = track_list[0]
+    headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
+    with open(track_to_open, 'rb') as content:
+        requests.post(f"{ds_api_base_url}/{ds_object_link}/bitstreams?name={ds_object_tag}",
+                      data=content,
+                      headers=headers,
+                      cookies={"JSESSIONID": login_to_dspace()})</code></pre>
+            <li>Link the track (digital object) to the right tape (archival object)</li>
+            <pre><code># Use the ArchivesSpaceClient from Agentarchive to add a digital object (with the track) to the Archival Object
+
+def link_dip_to_as(as_base_url, as_user, as_password, as_url_port, archival_obj_id, track_id, track_title,
+                   link_to_bitstream):
+    client = archivesspace.ArchivesSpaceClient(as_base_url, as_user, as_password, as_url_port)
+    client.add_digital_object(
+        parent_archival_object=f"/repositories/{as_archival_repo}/archival_objects/{archival_obj_id}",
+        identifier=track_id, title=track_title, uri=link_to_bitstream, object_type="sound_recording")</code></pre>
+        </ol>
+    </div>
+
+
+    <div id="icecream-con" class="step" data-rel-x="0" data-rel-y="1000"
+         data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
+         data-goto-next-list="icecream-pro crisps applepie-pro crisps-con">
+        <h1>Ice cream: Con's</h1>
+
+        <ul>
+            <li>Not so great in the Winter</li>
+            <li>If you're allergic to lactose/milk</li>
+            <li>Diet alternatives are not real ice cream</li>
+        </ul>
+    </div>
+
+
+    <!-- Crisps slides (3) -->
+    <div id="crisps" class="step" data-x="3500" data-y="2000"
+         data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
+         data-goto-next-list="icecream-con crisps-pro icecream applepie">
+        <h1>The starting point:</h1>
+        <ul>
+            <li>Postgres-DB dump contains:</li>
+            <ul>
+                <li>TrackId:
+                    <ul>
+                        <li class="marked">2909</li>
+                    </ul>
+                </li>
+                <li>Filename:
+                    <ul>
+                        <li>Provider/TrackNumber_<span class="marked">TrackId:</span></li>
+                        <li>SSOS/1234_<span class="marked">2909</span></li>
+                    </ul>
+                <li>Title of the track:
+                    <ul>
+                        <li>"Gràdh sìorraidh"</li>
+                    </ul>
+                </li>
+            </ul>
+            <br/>
+            <li class="substep">Already in ArchivesSpace:</li>
+            <ul class="substep">
+                <li>Tape as archival object:</li>
+                <ul>
+                    <li>Metadata in EAD</li>
+                    <li class="marked">ComponentId</li>
+                </ul>IMG_4054.jpeg
+            </ul>
+        </ul>
+    </div>
+
+    <div id="crisps-pro" class="step" data-rel-x="0" data-rel-y="1000"
+         data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
+         data-goto-next-list="crisps crisps-con icecream-pro applepie-pro">
+        <h1>Testing and Validating</h1>
+
+        <ul>
+            <li>Ensure that the file has been uploaded completely and undamaged</li>
+            <li>Verify the archival structure and correct linking with archivists</li>
+        </ul>
+        <div class="substep">
+        <h3 style="text-align: left">Find and fix bugs</h3>
+        <ul>
+            <li>pprint(response.status_code) pprint(response.content) pprint(response.json)</li>
+            <li>Visit <a href="https://stackoverflow.com/">Stack Overflow</a></li>
+            <li>View similar challenges & solutions: <a href="https://github.com/artefactual-labs/agentarchives/blob/master/agentarchives/archivesspace/client.py">github.com/artefactual-labs</a></li>
+        </ul>
+        </div>
+        <div class="substep">
+            <h3 style="text-align: left">Participate in meetings</h3>
+            <ul>
+                <li>Weekly catch up's with the project team to ensure an agile workflow</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div id="crisps-con" class="step" data-rel-x="0" data-rel-y="1000"
+         data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
+         data-goto-next-list="crisps-pro applepie icecream-con applepie-con">
+        <h1>Crisps: Con's</h1>
+
+        <ul>
+            <li>Commonly not used as dessert</li>
+            <li>Not sweet</li>
+        </ul>
+    </div>
+
+
+    <!-- Apple pie slides (3) -->
+    <div id="applepie" class="step" data-x="5000" data-y="2000"
+         data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
+         data-goto-next-list="crisps-con applepie-pro crisps icecream-pro">
+        <h1>My approach</h1>
+        <ul>
+            <li>Visualise migration flow</li>
+            <li>Read the RESTful API doc of <a href="https://archivesspace.github.io/archivesspace/api/#introduction">ArchivesSpace</a> & <a href="https://wiki.lyrasis.org/display/DSDOC5x/REST+API">DSpace</a></li>
+            <li>Played around with the <a href="https://requests.readthedocs.io/en/master/">request lib in Python</a></li>
+            <li>Tried to think in functions which will be needed for the migration flow</li>
+        </ul>
+        <img class="whiteboard substep" src="images/migration_flow.jpeg">
+    </div>
+
+    <div id="applepie-pro" class="step" data-rel-x="0" data-rel-y="1000"
+         data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
+         data-goto-next-list="applepie applepie-con crisps-pro icecream-con">
+        <h1>Testing and Validating</h1>
+
+        <ul>
+            <li>Great for dessert</li>
+            <li>Or just with a cup of tea or glass of milk</li>
+            <li>Best when warm</li>
+        </ul>
+    </div>
+
+
+    <div id="applepie-con" class="step" data-rel-x="0" data-rel-y="1000"
+         data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
+         data-goto-next-list="applepie-pro conclusion crisps-con conclusion">
+        <h1>Apple pie: Con's</h1>
+
+        <ul>
+            <li>I'm allergic to apple (but a small slice is worth it)</li>
+            <li>Not finger food</li>
+        </ul>
+    </div>
+
+
+    <div id="conclusion" class="step" data-rel-x="1000" data-rel-y="1000">
+        <h1>Conclusion</h1>
+
+        <p>Can I choose all three ;-)</p>
+
+        <p style="font-size: small; position: absolute; bottom: 30px; left: 300px;" id="image-credits"
+        >Image credits: <a href="https://www.flickr.com/photos/reimagingerica/35535918670">reimagingerica@Flickr</a>, 
+                        <a href="https://www.flickr.com/photos/mixedmolly/6636957665">mixedmolly@Flickr</a>,
+                        <a href="https://www.flickr.com/photos/stevepj2009/6296334551">stevepj2009@Flickr</a> </p>
+    </div>
+
+    <div id="overview" class="step" data-x="3000" data-y="2000" data-scale="9" style="pointer-events: none;">
+    </div>
+</div>
+
+<div id="impress-toolbar"></div>
+
+<div class="impress-progressbar"><div></div></div>
+<div class="impress-progress"></div>
+
+<div id="impress-help"></div>
+
+<script type="text/javascript" src="../js/impress.js"></script>
+<script>impress().init();</script>
+
+</body>
+</html>
