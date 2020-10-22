@@ -13,6 +13,7 @@ It is focused on plugin functionality, not the visual style of your presentation
     opacity: 1;
     transition: opacity 1s;
 }
+
 /*
   Speaker notes allow you to write comments within the steps, that will not 
   be displayed as part of the presentation. However, they will be picked up

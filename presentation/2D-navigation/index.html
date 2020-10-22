@@ -6,6 +6,8 @@
     <meta name="description" content="Application Bodleian Library" />
     <meta name="author" content="Sebastian Lange" />
     <script src="https://kit.fontawesome.com/df0850e7ca.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="src/plugins/substep/substep.js"></script>
+    <script type="text/javascript" src="src/impress.js"></script>
     <link rel="stylesheet" href="highlight/styles/agate.css">
     <script src="highlight/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
@@ -25,7 +27,7 @@
 <!-- Some images that are fixed to background in the css -->
 
 <img id="applepie-image" class="bg" src="">
-<img id="old-guitar-image" class="bg" src="images/old-guitar.jpg">
+<img id="old-guitar-image" class="bg" src="images/old_guitar.png">
 <img id="track_tape-image" class="bg" src="images/track_tape_structure.png">
 <img id="tolkien-migration-image" class="bg" src="images/tolkien_migration.png">
 
@@ -79,7 +81,7 @@
     <!-- The challenge(3) -->
     <div id="challenge" class="step" data-x="2000" data-y="2000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="contents plan-goals contents approach">
+         data-goto-next-list="contents plan-goals contents starting">
         <h1>The challenge:</h1>
 
         <ul>
@@ -172,7 +174,7 @@ def main():
     <!-- Crisps slides (3) -->
     <div id="starting" class="step" data-x="3500" data-y="2000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="putting-together validation challenge applepie">
+         data-goto-next-list="putting-together validation challenge approach">
         <h1>The starting point:</h1>
         <ul>
             <li>Postgres-DB dump contains:</li>
@@ -279,7 +281,7 @@ else:
             <li>Read the RESTful API doc of <a href="https://archivesspace.github.io/archivesspace/api/#introduction">ArchivesSpace</a> & <a href="https://wiki.lyrasis.org/display/DSDOC5x/REST+API">DSpace</a></li>
             <li>Played around with the <a href="https://requests.readthedocs.io/en/master/">request lib in Python</a></li>
         </ul>
-        <img class="whiteboard substep" src="images/migration_flow.jpeg">
+        <img class="whiteboard substep" src="images/migration_flow.png">
     </div>
 
     <div id="bigger-dataset" class="step" data-rel-x="0" data-rel-y="1000"
@@ -365,6 +367,7 @@ def create_track_list():
 <div class="impress-progress"></div>
 
 <div id="impress-help"></div>
+
 
 <script type="text/javascript" src="js/impress.js"></script>
 <script>impress().init();</script>

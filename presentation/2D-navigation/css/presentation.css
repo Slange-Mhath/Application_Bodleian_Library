@@ -41,6 +41,14 @@
     display: none;
 }
 
+#impress .step .substep {
+    opacity: 0;
+}
+
+#impress .step .substep.substep-visible {
+    opacity: 1;
+    transition: opacity 1s;
+}
 
 /*
   The body background is the bacgkround of "everything". Many
@@ -290,7 +298,7 @@ body.impress-on-overview #icecream-image {
     top: 0px;
 }
 
-body.impress-on-crisps-pro #tolkien-migration-image{
+body.impress-on-validation #tolkien-migration-image{
     opacity: 0.7;
     transition: opacity 2s;
 }
