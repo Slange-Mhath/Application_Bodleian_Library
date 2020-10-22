@@ -44,7 +44,13 @@
         <h4 class="down-100">
             <strong>Slides:</strong>
             <a href="#" title="View the presentation online">
-                Link
+                Link to the presentation
+            </a>
+        </h4>
+        <h4>
+            <strong>Code:</strong>
+            <a href="https://github.com/Slange-Mhath/Application_Bodleian_Library/blob/main/Migration%20Script/mp4_migration.py" title="View my code on GitHub">
+                Link to the code
             </a>
         </h4>
 
@@ -60,7 +66,7 @@
         <h1>Background:</h1>
         <p>Tobar and Dulchais is the biggest and most important data repository of Scottish/Gaelic music worldwide</p>
         <ul>
-            <li class="substep">Tobar and Dulchais Data:
+            <li class="substep" style="margin-top: 10%;">Tobar and Dulchais Data:
                 <ul>
                 <li>Digitised tapes with ~50.000 tracks</li>
                 <li>Stored in an ad-hoc Postgres-DB</li>
@@ -71,9 +77,9 @@
     </div>
 
     <!-- Ice cream slides (3) -->
-    <div id="icecream" class="step" data-x="2000" data-y="2000"
+    <div id="challenge" class="step" data-x="2000" data-y="2000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="contents icecream-pro contents crisps">
+         data-goto-next-list="contents plan-goals contents approach">
         <h1>The challenge:</h1>
 
         <ul>
@@ -88,18 +94,18 @@
         <img class="substep graphic" src="images/archival_structure.png">
     </div>
 
-    <div id="icecream-pro" class="step" data-rel-x="0" data-rel-y="1000"
+    <div id="plan-goals" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="icecream icecream-con applepie crisps-pro">
+         data-goto-next-list="icecream putting-together approach validation">
         <h1>Plan substeps and goals</h1>
         <ol>
-            <li>Login to DSpace via API </li>
+            <li style="margin-bottom: -10px;">Login to DSpace via API </li>
             <pre><code>def login_to_dspace():
     response = requests.post(ds_endpoint, data=login_data)
     set_cookie = response.headers["Set-Cookie"].split(";")[0]
     session_id = set_cookie[set_cookie.find("=") + 1:]
     return session_id</code></pre>
-            <li>Upload the first track to DSpace</li>
+            <li style="margin-bottom: -10px;">Upload the first track to DSpace</li>
             <pre><code># Uploads the track into the DSPACE object
 
 def upload_track(ds_object_link, track_to_open, ds_object_tag):
@@ -111,7 +117,7 @@ def upload_track(ds_object_link, track_to_open, ds_object_tag):
                       data=content,
                       headers=headers,
                       cookies={"JSESSIONID": login_to_dspace()})</code></pre>
-            <li>Link the track (digital object) to the right tape (archival object)</li>
+            <li style="margin-bottom: -10px;">Link the track (digital object) to the right tape (archival object)</li>
             <pre><code># Use the ArchivesSpaceClient from Agentarchive to add a digital object (with the track) to the Archival Object
 
 def link_dip_to_as(as_base_url, as_user, as_password, as_url_port, archival_obj_id, track_id, track_title,
@@ -124,23 +130,49 @@ def link_dip_to_as(as_base_url, as_user, as_password, as_url_port, archival_obj_
     </div>
 
 
-    <div id="icecream-con" class="step" data-rel-x="0" data-rel-y="1000"
+    <div id="putting-together" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="icecream-pro crisps applepie-pro crisps-con">
-        <h1>Ice cream: Con's</h1>
+         data-goto-next-list="plan-goals crisps bigger-dataset function-call">
+        <h1>Putting things together</h1>
 
         <ul>
-            <li>Not so great in the Winter</li>
-            <li>If you're allergic to lactose/milk</li>
-            <li>Diet alternatives are not real ice cream</li>
+            <li>Getting the data of the archival objects</li>
+            <li>iterating over the EAD structure to the component_id</li>
+            <li>Check if the tape_id has a matching track</li>
+            <li>Format the metadata for the creation of the digital object in DSpace</li>
+            <li>Check if there is a corresponding file</li>
         </ul>
+        <pre><code>
+def main():
+    as_login()
+    as_ead_data = get_as_data(as_login())
+    ds_tracks = {}
+    for ds_track in create_track_list():  # for ds_track (which is a dict with info about the track) do:
+        ds_tracks[ds_track['id']] = ds_track  # add to the dict ds_tracks a key which is the ds_track['id] and as the
+        # value the respective ds_track
+    fonds = as_ead_data['children']  # start iterating over the EAD-XML structure (now json) to get to the AO item
+    for fond in fonds:
+        subfonds = fond['children']
+        for subfond in subfonds:
+            items = subfond['children']
+            for item in items:
+                track_comp_id = item['component_id']  # save the id of the archival_object as track_comp_id
+                if track_comp_id in ds_tracks:
+                    matching_track = ds_tracks[track_comp_id]  # put the ds_track with the
+                    # matching track_comp_id in matching_track
+                    if len(matching_track['title']) == 0:  # if the file from the csv has no title use the one from AS
+                        matching_track['title'] = item['title']
+                    track_formatted = [format_metadata('dc.identifier', matching_track['id']),
+                                       format_metadata('dc.title', matching_track['title'])]
+                    if Path.exists(path_to_stored_file(matching_track)):  # check if there is a file behind the path
+        </code></pre>
     </div>
 
 
     <!-- Crisps slides (3) -->
-    <div id="crisps" class="step" data-x="3500" data-y="2000"
+    <div id="starting" class="step" data-x="3500" data-y="2000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="icecream-con crisps-pro icecream applepie">
+         data-goto-next-list="putting-together validation challenge applepie">
         <h1>The starting point:</h1>
         <ul>
             <li>Postgres-DB dump contains:</li>
@@ -162,20 +194,20 @@ def link_dip_to_as(as_base_url, as_user, as_password, as_url_port, archival_obj_
                 </li>
             </ul>
             <br/>
-            <li class="substep">Already in ArchivesSpace:</li>
+            <li class="substep" style="margin-top: -30px;">Already in ArchivesSpace:</li>
             <ul class="substep">
                 <li>Tape as archival object:</li>
                 <ul>
                     <li>Metadata in EAD</li>
                     <li class="marked">ComponentId</li>
-                </ul>IMG_4054.jpeg
+                </ul>
             </ul>
         </ul>
     </div>
 
-    <div id="crisps-pro" class="step" data-rel-x="0" data-rel-y="1000"
+    <div id="validation" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="crisps crisps-con icecream-pro applepie-pro">
+         data-goto-next-list="crisps function-call plan-goals bigger-dataset">
         <h1>Testing and Validating</h1>
 
         <ul>
@@ -199,66 +231,128 @@ def link_dip_to_as(as_base_url, as_user, as_password, as_url_port, archival_obj_
     </div>
 
 
-    <div id="crisps-con" class="step" data-rel-x="0" data-rel-y="1000"
+    <div id="function-call" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="crisps-pro applepie icecream-con applepie-con">
-        <h1>Crisps: Con's</h1>
+         data-goto-next-list="validation applepie putting-together lesson-learned">
+        <h1>Try calling those functions</h1>
 
         <ul>
-            <li>Commonly not used as dessert</li>
-            <li>Not sweet</li>
+            <li>Create the digital object in DSpace </li>
+            <li>Upload the track</li>
+            <li>Link the track to ArchivesSpace</li>
+            <li>Logg Error's</li>
         </ul>
+        <pre><code>
+        try:
+            # create the object in Dspace with the MD of the track, in the respective DS collection
+            ds_object = create_dspace_record(track_formatted, ds_collection,
+                                             login_to_dspace())
+            #  upload the track in the created DS object and use the track_tag as the name for the track
+            upload_track(ds_object['link'],
+                         path_to_stored_file(matching_track),
+                         matching_track['track_tag'])
+            # create the link which has to be used in AS later and is created through the handle and tag
+            link_to_bitstream = f"{ds_api_base_url}/bitstream/handle/{ds_object['handle']}/{matching_track['track_tag']}"
+            # create a Digital object with the track and link it to the AO item in ArchivesSpace
+            link_dip_to_as(as_base_url, as_user, as_password, as_url_port, item['id'],
+                           matching_track['id'], matching_track['title'], link_to_bitstream)
+            pprint(f" item id = {item['id']} and {matching_track['id']}")
+        except:
+            logging.warning("Unique Id already exists")
+    else:
+        pprint(f"{path_to_stored_file(matching_track)} is not in the test files")
+        logging.warning(f"{path_to_stored_file(matching_track)} is not in the test files")
+else:
+    pprint(f"Track with id {track_comp_id} is not in the CSV")
+    logging.warning(f"Track with id {track_comp_id} is not in the CSV")
+        </code></pre>
     </div>
 
 
     <!-- Apple pie slides (3) -->
-    <div id="applepie" class="step" data-x="5000" data-y="2000"
+    <div id="approach" class="step" data-x="5000" data-y="2000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="crisps-con applepie-pro crisps icecream-pro">
+         data-goto-next-list="function-call bigger-dataset challenge plan-goals">
         <h1>My approach</h1>
         <ul>
-            <li>Visualise migration flow</li>
+            <li>Visualise migration flow and think in functions needed</li>
             <li>Read the RESTful API doc of <a href="https://archivesspace.github.io/archivesspace/api/#introduction">ArchivesSpace</a> & <a href="https://wiki.lyrasis.org/display/DSDOC5x/REST+API">DSpace</a></li>
             <li>Played around with the <a href="https://requests.readthedocs.io/en/master/">request lib in Python</a></li>
-            <li>Tried to think in functions which will be needed for the migration flow</li>
         </ul>
         <img class="whiteboard substep" src="images/migration_flow.jpeg">
     </div>
 
-    <div id="applepie-pro" class="step" data-rel-x="0" data-rel-y="1000"
+    <div id="bigger-dataset" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="applepie applepie-con crisps-pro icecream-con">
-        <h1>Testing and Validating</h1>
-
+         data-goto-next-list="applepie lesson-learned validation putting-together">
+        <h1>Adapting to a bigger data set</h1>
         <ul>
-            <li>Great for dessert</li>
-            <li>Or just with a cup of tea or glass of milk</li>
-            <li>Best when warm</li>
+            <li style="padding-top: 20px;">Creating a list of tracks (dict) with all information (Id, Path, Title, Tag)
+            </li>
         </ul>
+
+        <pre>
+            <code>def get_catalogue_tracks():
+    with open(path_to_csv,
+              'r') as read_obj:
+        tracks_as_dict = DictReader(read_obj)
+        tracks_as_list = list(tracks_as_dict)
+        return tracks_as_list
+
+
+def create_track_list():
+    track_list = get_catalogue_tracks()
+    tracks_with_paths_list = []
+    for track in track_list:
+        data_folder = Path(path_to_files)
+        if len(track['mp3']) > 0:  # check if there is a file specified to the entry in the csv
+            if len(track['title']) < 0:  # check if the file has a title otherwise name it "untitled"
+                track['title'] = "Untitled"
+            path_to_track = data_folder / track['mp3']  # create the path to the file
+            track.update({'track_path': path_to_track})  # update the track dict. with the path of the track
+            track_tag = re.sub(r"/([0-9_]+)/\1\.", "/\\1.", track['mp3']).replace("/", "_")  # replace the "/" with "_"
+            track.update({'track_tag': track_tag})  # update the track dict. with the tag of the track
+            tracks_with_paths_list.append(track)  # add the track as dict. (with the keys: id, mp3, title, track_path,
+            # track_tag) to the tracks_with_paths_list.
+    return tracks_with_paths_list
+            </code>
+        </pre>
     </div>
 
 
-    <div id="applepie-con" class="step" data-rel-x="0" data-rel-y="1000"
+    <div id="lesson-learned" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="applepie-pro conclusion crisps-con conclusion">
-        <h1>Apple pie: Con's</h1>
-
+         data-goto-next-list="bigger-dataset future function-call future">
+        <h1>Lessons learned</h1>
         <ul>
-            <li>I'm allergic to apple (but a small slice is worth it)</li>
-            <li>Not finger food</li>
+            <li>Communication is key!</li>
+            <li>Testing, Testing, Testing</li>
+            <li>Python and its libs are very convenient</li>
         </ul>
+        <div class="substep">
+        <h3>What could have been done better?</h3>
+        <ul>
+            <li>More Exceptions and improved error handling</li>
+            <li>Cleaner Code</li>
+            <li>Less self-made pressure</li>
+        </ul>
+        </div>
     </div>
 
 
-    <div id="conclusion" class="step" data-rel-x="1000" data-rel-y="1000">
-        <h1>Conclusion</h1>
+    <div id="future" class="step" data-rel-x="1000" data-rel-y="1000">
+        <h1>The future</h1>
 
-        <p>Can I choose all three ;-)</p>
+        <ul>
+            <li>Preserve the tapes with Archivematica as AIP</li>
+            <li>Trigger the Script to upload and link the DIP</li>
+        </ul>
+        <img class="substep graphic" style="width: 73%; margin-left: 30%; margin-top: -30px;" src="images/OAIS.png">
+    </div>
 
-        <p style="font-size: small; position: absolute; bottom: 30px; left: 300px;" id="image-credits"
-        >Image credits: <a href="https://www.flickr.com/photos/reimagingerica/35535918670">reimagingerica@Flickr</a>, 
-                        <a href="https://www.flickr.com/photos/mixedmolly/6636957665">mixedmolly@Flickr</a>,
-                        <a href="https://www.flickr.com/photos/stevepj2009/6296334551">stevepj2009@Flickr</a> </p>
+    <div id="bye" class="step" data-rel-x="1000" data-rel-y="1000">
+        <h1>Thank you</h1>
+        <img src="images/quote.png" style="width:100%">
     </div>
 
     <div id="overview" class="step" data-x="3000" data-y="2000" data-scale="9" style="pointer-events: none;">
