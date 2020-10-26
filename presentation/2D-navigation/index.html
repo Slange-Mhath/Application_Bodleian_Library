@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Media migration Tobar and Dulchais</title>
+    <title>Media migration Tobar an Dualchais</title>
     <meta name="description" content="Application Bodleian Library" />
     <meta name="author" content="Sebastian Lange" />
     <script src="https://kit.fontawesome.com/df0850e7ca.js" crossorigin="anonymous"></script>
@@ -40,24 +40,24 @@
         <h4><strong>10/26/2020</strong> | Bodleian Digital Library Systems & Services (BDLSS)</h4>
         <h4><strong>Application as Software Engineer (Digital Research)</strong></h4>
         <div class="heading">
-        <h1>Tobar and Dulchais</h1>
+        <h1>Tobar an Dualchais</h1>
         <h2>Migration of media files into ArchivesSpace</h2>
         </div>
         <h4 class="down-100">
             <strong>Slides:</strong>
             <a href="#" title="View the presentation online">
-                Link to the presentation
+                Link
             </a>
         </h4>
         <h4>
             <strong>Code:</strong>
             <a href="https://github.com/Slange-Mhath/Application_Bodleian_Library/blob/main/Migration%20Script/mp4_migration.py" title="View my code on GitHub">
-                Link to the code
+                Link
             </a>
         </h4>
 
         <h5>
-            <strong><a class="mysite" href="www.sebastian-lange.eu">Sebastian Lange</a></strong> |
+            <strong><a class="mysite" href="http://www.sebastian-lange.eu">Sebastian Lange</a></strong> |
             <a class="twitter" href="https://twitter.com/BastiiLange" title="Sebastian Lange on Twitter"><i class="fab fa-twitter"></i>@BastiiLange</a> |
             <a class="orcid" href="https://orcid.org/0000-0003-2590-6266" title="Sebastian Lange on ORCID"><i class="fab fa-orcid"></i>0000-0003-2590-6266</a> |
             <a class="github" href="https://github.com/Slange-Mhath" title="Sebastian Lange on GitHub"><i class="fab fa-github"></i>Slange-Mhath</a>
@@ -66,11 +66,12 @@
 
     <div id="contents" class="step" data-rel-x="1500" data-rel-y="1500" data-scale="1">
         <h1>Background:</h1>
-        <p>Tobar and Dulchais is the biggest and most important data repository of Scottish/Gaelic music worldwide</p>
+        <p>Tobar an Dualchais is the biggest and most important data repository of Scottish Gaelic music worldwide</p>
         <ul>
-            <li class="substep" style="margin-top: 10%;">Tobar and Dulchais Data:
+            <li class="substep" style="margin-top: 10%;">Tobar an Dualchais data:
                 <ul>
-                <li>Digitised tapes with ~50.000 tracks</li>
+                <li>Digitised enriched tapes with ~50,000 tracks</li>
+                    <li>Unique extracts of the Scottish Gaelic culture</li>
                 <li>Stored in an ad-hoc Postgres-DB</li>
                 <li>~ 100 Images </li>
                 </ul>
@@ -85,7 +86,7 @@
         <h1>The challenge:</h1>
 
         <ul>
-            <li>Migrate the content as copy into an Archival System (EAD):
+            <li>Migrate the content as copy into an archival system (EAD):
             <ul>
             <li>Create a digital object for the track and its metadata in DSpace</li>
             <li>Link the digital object to the archival object in ArchivesSpace</li>
@@ -99,7 +100,7 @@
     <div id="plan-goals" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
          data-goto-next-list="icecream putting-together approach validation">
-        <h1>Plan substeps and goals</h1>
+        <h1>Plan substeps and goals:</h1>
         <ol>
             <li style="margin-bottom: -10px;">Login to DSpace via API </li>
             <pre><code>def login_to_dspace():
@@ -135,11 +136,11 @@ def link_dip_to_as(as_base_url, as_user, as_password, as_url_port, archival_obj_
     <div id="putting-together" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
          data-goto-next-list="plan-goals crisps bigger-dataset function-call">
-        <h1>Putting things together</h1>
+        <h1>Putting things together:</h1>
 
         <ul>
             <li>Getting the data of the archival objects</li>
-            <li>iterating over the EAD structure to the component_id</li>
+            <li>Iterating over the EAD structure to the component_id</li>
             <li>Check if the tape_id has a matching track</li>
             <li>Format the metadata for the creation of the digital object in DSpace</li>
             <li>Check if there is a corresponding file</li>
@@ -210,10 +211,10 @@ def main():
     <div id="validation" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
          data-goto-next-list="crisps function-call plan-goals bigger-dataset">
-        <h1>Testing and Validating</h1>
+        <h1>Testing and validating:</h1>
 
         <ul>
-            <li>Ensure that the file has been uploaded completely and undamaged</li>
+            <li>Ensure that the uploaded file is complete and undamaged</li>
             <li>Verify the archival structure and correct linking with archivists</li>
         </ul>
         <div class="substep">
@@ -221,13 +222,13 @@ def main():
         <ul>
             <li>pprint(response.status_code) pprint(response.content) pprint(response.json)</li>
             <li>Visit <a href="https://stackoverflow.com/">Stack Overflow</a></li>
-            <li>View similar challenges & solutions: <a href="https://github.com/artefactual-labs/agentarchives/blob/master/agentarchives/archivesspace/client.py">github.com/artefactual-labs</a></li>
+            <li>View similar challenges an solutions: <a href="https://github.com/artefactual-labs/agentarchives/blob/master/agentarchives/archivesspace/client.py">github.com/artefactual-labs</a></li>
         </ul>
         </div>
         <div class="substep">
-            <h3 style="text-align: left">Participate in meetings</h3>
+            <h3 style="text-align: left">Weekly catch up</h3>
             <ul>
-                <li>Weekly catch up's with the project team to ensure an agile workflow</li>
+                <li>Discuss new ideas and challenges with the team to ensure an agile workflow</li>
             </ul>
         </div>
     </div>
@@ -235,14 +236,14 @@ def main():
 
     <div id="function-call" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
-         data-goto-next-list="validation applepie putting-together lesson-learned">
-        <h1>Try calling those functions</h1>
+         data-goto-next-list="validation applepie putting-together result">
+        <h1>Try calling those functions:</h1>
 
         <ul>
             <li>Create the digital object in DSpace </li>
             <li>Upload the track</li>
             <li>Link the track to ArchivesSpace</li>
-            <li>Logg Error's</li>
+            <li>Log errors</li>
         </ul>
         <pre><code>
         try:
@@ -269,17 +270,33 @@ else:
     logging.warning(f"Track with id {track_comp_id} is not in the CSV")
         </code></pre>
     </div>
+    <div id="result" class="step" data-x="7000" data-y="2100"
+         data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
+         data-goto-next-list="function-call bigger-dataset function-call lesson-learned">
+        <h1>How it went:</h1>
+        <ul>
+            <li>49,819 digital objects created and uploaded in 8 days and 6 hours</li>
+        </ul>
+        <div class="substep">
+            <h3>Validate the data</h3>
+            <ul>
+                <li>Check the databases against the rescue site</li>
+                <li>Compare unique IDs and directory listings</li>
+            </ul>
+            <h3 class="substep">Migration was successful</h3>
+        </div>
+    </div>
 
 
     <!-- Apple pie slides (3) -->
     <div id="approach" class="step" data-x="5000" data-y="2000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
          data-goto-next-list="function-call bigger-dataset challenge plan-goals">
-        <h1>My approach</h1>
+        <h1>My approach:</h1>
         <ul>
             <li>Visualise migration flow and think in functions needed</li>
-            <li>Read the RESTful API doc of <a href="https://archivesspace.github.io/archivesspace/api/#introduction">ArchivesSpace</a> & <a href="https://wiki.lyrasis.org/display/DSDOC5x/REST+API">DSpace</a></li>
-            <li>Played around with the <a href="https://requests.readthedocs.io/en/master/">request lib in Python</a></li>
+            <li>Read the RESTful API doc of <a href="https://archivesspace.github.io/archivesspace/api/#introduction">ArchivesSpace</a> and <a href="https://wiki.lyrasis.org/display/DSDOC5x/REST+API">DSpace</a></li>
+            <li>Play around with the <a href="https://requests.readthedocs.io/en/master/">request lib in Python</a></li>
         </ul>
         <img class="whiteboard substep" src="images/migration_flow.png">
     </div>
@@ -325,7 +342,7 @@ def create_track_list():
     <div id="lesson-learned" class="step" data-rel-x="0" data-rel-y="1000"
          data-goto-key-list="ArrowUp ArrowDown ArrowLeft ArrowRight"
          data-goto-next-list="bigger-dataset future function-call future">
-        <h1>Lessons learned</h1>
+        <h1>Lessons learned:</h1>
         <ul>
             <li>Communication is key!</li>
             <li>Testing, Testing, Testing</li>
@@ -334,20 +351,21 @@ def create_track_list():
         <div class="substep">
         <h3>What could have been done better?</h3>
         <ul>
-            <li>More Exceptions and improved error handling</li>
-            <li>Cleaner Code</li>
-            <li>Less self-made pressure</li>
+            <li>Exceptions</li>
+            <li>Error handling</li>
+            <li>Code</li>
+            <li>Validation with checksums</li>
         </ul>
         </div>
     </div>
 
 
     <div id="future" class="step" data-rel-x="1000" data-rel-y="1000">
-        <h1>The future</h1>
+        <h1>The future:</h1>
 
         <ul>
             <li>Preserve the tapes with Archivematica as AIP</li>
-            <li>Trigger the Script to upload and link the DIP</li>
+            <li>Trigger the script to upload and link the DIP</li>
         </ul>
         <img class="substep graphic" style="width: 73%; margin-left: 30%; margin-top: -30px;" src="images/OAIS.png">
     </div>
